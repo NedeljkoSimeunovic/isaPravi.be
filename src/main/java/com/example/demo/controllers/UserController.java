@@ -1,6 +1,10 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.UserModel;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,7 +13,7 @@ import java.util.List;
 @RequestMapping("user")
 public class UserController {
     @GetMapping("get-first-name")
-    public String grtFirstName() {
+    public String getFirstName() {
         return "Nedeljko";
     }
 
@@ -19,7 +23,10 @@ public class UserController {
     }
 
     @PostMapping("create-user")
-    public boolean createUser(@RequestBody UserModel userModel ){
-        return true;
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserModel userModel, BindingResult result) {
+        if (result.hasErrors()) {
+            return new ResponseEntity<>("Neuspesno registrovan!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(userModel, HttpStatus.CREATED);
     }
 }
